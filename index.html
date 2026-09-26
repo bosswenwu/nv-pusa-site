@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>女菩萨</title>
+  <meta name="description" content="未公开目录。只有分享链接可以打开。" />
+  <meta name="rating" content="adult" />
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#09080b" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,680&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #09080b;
+      --ink: #f6f1ea;
+      --line: rgba(246, 241, 234, 0.12);
+      --seal: #c81e3a;
+      color-scheme: dark;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(900px 480px at 0% -10%, rgba(200, 30, 58, 0.28), transparent 60%),
+        radial-gradient(700px 420px at 100% 0%, rgba(231, 194, 122, 0.14), transparent 55%),
+        var(--bg);
+    }
+    .seal {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 35% 30%, #ff6b74, var(--seal) 62%);
+      color: #fff;
+      font-family: Fraunces, "Songti SC", serif;
+      font-weight: 680;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    }
+    .gate {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(600px 300px at 50% 30%, rgba(200, 30, 58, 0.35), transparent 70%),
+        #070608;
+    }
+    .gate[hidden] { display: none; }
+    .gate-card { width: min(480px, 100%); text-align: center; }
+    .gate h2 {
+      font-family: Fraunces, serif;
+      font-size: 48px;
+      margin: 8px 0;
+      letter-spacing: -0.04em;
+    }
+    .gate p { color: #d9cdc4; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div id="lock" class="gate">
+    <div class="gate-card">
+      <div class="seal" style="margin: 0 auto;">菩</div>
+      <h2>女菩萨</h2>
+      <p id="lock-copy">浏览界面是加密的。没有分享链接里的钥匙，这里打不开。</p>
+    </div>
+  </div>
+  <div id="mount" hidden></div>
+  <script>
+    (function () {
+      const lock = document.getElementById("lock");
+      const copy = document.getElementById("lock-copy");
+      const mount = document.getElementById("mount");
+      const params = new URLSearchParams((location.hash || "").replace(/^#/, ""));
+      const key = params.get("k") || sessionStorage.getItem("nv-key") || "";
+      if (!/^[A-Za-z0-9_-]{16,80}$/.test(key)) return;
+      copy.textContent = "正在打开…";
+
+      async function openVault(password) {
+        const response = await fetch("./vault.bin", { cache: "no-store" });
+        if (!response.ok) throw new Error("vault");
+        const raw = new Uint8Array(await response.arrayBuffer());
+        const iv = raw.slice(0, 12);
+        const cipher = raw.slice(12);
+        const material = await crypto.subtle.importKey(
+          "raw",
+          new TextEncoder().encode(password),
+          "PBKDF2",
+          false,
+          ["deriveKey"]
+        );
+        const derived = await crypto.subtle.deriveKey(
+          { name: "PBKDF2", salt: new TextEncoder().encode("nv-pusa-vault-v1"), iterations: 120000, hash: "SHA-256" },
+          material,
+          { name: "AES-GCM", length: 256 },
+          false,
+          ["decrypt"]
+        );
+        const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, derived, cipher);
+        const payload = JSON.parse(new TextDecoder().decode(plain));
+        if (!payload || !payload.catalog || !Array.isArray(payload.catalog.people)) throw new Error("catalog");
+        if (!payload.css || !payload.html || !payload.js) throw new Error("shell");
+        return payload;
+      }
+
+      openVault(key).then(function (payload) {
+        window.CATALOG = payload.catalog;
+        const style = document.createElement("style");
+        style.textContent = payload.css;
+        document.head.appendChild(style);
+        mount.innerHTML = payload.html;
+        mount.hidden = false;
+        sessionStorage.setItem("nv-key", key);
+        if (location.hash.indexOf("k=") === -1) {
+          history.replaceState(null, "", "#k=" + encodeURIComponent(key));
+        }
+        lock.hidden = true;
+        const app = document.createElement("script");
+        app.textContent = payload.js;
+        document.body.appendChild(app);
+      }).catch(function () {
+        copy.textContent = "钥匙不对，浏览界面仍然是锁着的。";
+      });
+    })();
+  </script>
+</body>
+</html>

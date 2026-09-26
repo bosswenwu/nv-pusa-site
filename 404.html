@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 · 女菩萨</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#09080b" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,680&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #09080b;
+      --ink: #f6f1ea;
+      --muted: #d9cdc4;
+      --gold: #e7c27a;
+      --seal: #c81e3a;
+      color-scheme: dark;
+    }
+    :root[data-theme="light"] {
+      --bg: #f4efe7;
+      --ink: #1c1412;
+      --muted: #6d5e56;
+      --gold: #8a5a12;
+      --seal: #9d1830;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: var(--ink);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(620px 320px at 50% 28%, rgba(200, 30, 58, 0.38), transparent 70%),
+        var(--bg);
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.045) 0.8px, transparent 0.8px);
+      background-size: 22px 22px;
+      mask-image: linear-gradient(180deg, #000, transparent 85%);
+    }
+    :root[data-theme="light"] body::before {
+      background-image: radial-gradient(rgba(40, 20, 16, 0.06) 0.8px, transparent 0.8px);
+    }
+    main {
+      position: relative;
+      width: min(560px, 100%);
+      text-align: center;
+    }
+    .num {
+      margin: 0;
+      font-family: Fraunces, "Songti SC", serif;
+      font-size: clamp(108px, 22vw, 188px);
+      font-weight: 680;
+      letter-spacing: -0.06em;
+      line-height: 0.8;
+      background: linear-gradient(180deg, #fff 10%, #ffb4b8 55%, #c81e3a 140%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    :root[data-theme="light"] .num {
+      background: linear-gradient(180deg, #2a1416 0%, #9d1830 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+    .seal {
+      width: 42px;
+      height: 42px;
+      margin: 18px auto 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 35% 30%, #ff6b74, var(--seal) 62%);
+      color: #fff;
+      font-family: Fraunces, serif;
+      font-weight: 680;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    }
+    h1 {
+      margin: 14px 0 0;
+      font-family: Fraunces, "Songti SC", serif;
+      font-size: clamp(36px, 6vw, 52px);
+      font-weight: 680;
+      letter-spacing: -0.04em;
+    }
+    p {
+      max-width: 36ch;
+      margin: 12px auto 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    a {
+      display: inline-flex;
+      align-items: center;
+      height: 42px;
+      margin-top: 22px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: var(--bg);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="num">404</p>
+    <div class="seal" aria-hidden="true">菩</div>
+    <h1>没有这一页</h1>
+    <p>地址写错了，或者这一页已经不在。目录仍然只在分享链接里。</p>
+    <a href="./">回到女菩萨</a>
+  </main>
+  <script>
+    const theme = localStorage.getItem("nvpusa-theme");
+    if (theme === "light" || theme === "dark") {
+      document.documentElement.dataset.theme = theme;
+      document.querySelector('meta[name="theme-color"]').setAttribute("content", theme === "light" ? "#f4efe7" : "#09080b");
+    }
+  </script>
+</body>
+</html>
