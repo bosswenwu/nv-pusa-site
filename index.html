@@ -84,7 +84,7 @@
       copy.textContent = "正在打开…";
 
       async function openVault(password) {
-        const response = await fetch("./vault.bin?v=4", { cache: "no-store" });
+        const response = await fetch("./vault.bin?v=5", { cache: "no-store" });
         if (!response.ok) throw new Error("vault");
         const raw = new Uint8Array(await response.arrayBuffer());
         const iv = raw.slice(0, 12);
